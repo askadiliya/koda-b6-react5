@@ -12,9 +12,9 @@ function App() {
   const isSmoker = watch("isSmoker");
 
   const onSubmit = (data) => {
-    console.log("DATA FORM:", data);
-    alert("Form berhasil dikirim!");
-    reset();
+    localStorage.setItem("smokerForm", JSON.stringify(data));
+    console.log("DATA DISIMPAN:", data);
+    alert("Data berhasil disimpan ke Local Storage!");
   };
 
   return (
@@ -23,7 +23,6 @@ function App() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-2xl bg-white rounded-lg shadow-sm overflow-hidden"
       >
-        {/* Header */}
         <div className="border-t-8 border-purple-600 px-6 py-5">
           <h1 className="text-2xl font-semibold text-gray-900">
             Form Survey Perokok
@@ -34,7 +33,6 @@ function App() {
         </div>
 
         <div className="px-6 py-6 space-y-8">
-          {/* Nama */}
           <div>
             <label className="block text-sm font-medium mb-2">
               Nama Lengkap
@@ -52,7 +50,6 @@ function App() {
             )}
           </div>
 
-          {/* Umur */}
           <div>
             <label className="block text-sm font-medium mb-2">Umur</label>
             <input
@@ -72,7 +69,6 @@ function App() {
             )}
           </div>
 
-          {/* Gender */}
           <div>
             <p className="text-sm font-medium mb-3">Jenis Kelamin</p>
             <div className="space-y-2">
@@ -97,7 +93,6 @@ function App() {
             )}
           </div>
 
-          {/* Is Smoker */}
           <div>
             <p className="text-sm font-medium mb-3">
               Apakah Anda seorang perokok?
@@ -124,7 +119,6 @@ function App() {
             )}
           </div>
 
-          {/* Cigarettes (aktif hanya jika Ya) */}
           {isSmoker === "Ya" && (
             <div>
               <p className="text-sm font-medium mb-3">
@@ -151,7 +145,7 @@ function App() {
             </div>
           )}
 
-          {/* Action */}
+
           <div className="flex items-center gap-4 pt-4">
             <button
               type="submit"

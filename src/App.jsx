@@ -1,8 +1,29 @@
+import { useForm } from "react-hook-form";
+
 function App() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const isSmoker = watch("isSmoker");
+
+  const onSubmit = (data) => {
+    console.log("DATA FORM:", data);
+    alert("Form berhasil dikirim!");
+    reset();
+  };
+
   return (
     <div className="min-h-screen bg-[#f1f3f4] flex justify-center py-10 px-4">
-      <form className="w-full max-w-2xl bg-white rounded-lg shadow-sm overflow-hidden">
-
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-2xl bg-white rounded-lg shadow-sm overflow-hidden"
+      >
+        {/* Header */}
         <div className="border-t-8 border-purple-600 px-6 py-5">
           <h1 className="text-2xl font-semibold text-gray-900">
             Form Survey Perokok
@@ -13,113 +34,124 @@ function App() {
         </div>
 
         <div className="px-6 py-6 space-y-8">
-
+          {/* Nama */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium mb-2">
               Nama Lengkap
             </label>
             <input
               type="text"
-              name="name"
               placeholder="Jawaban Anda"
+              {...register("name", { required: "Nama wajib diisi" })}
               className="w-full border-b-2 border-gray-300 focus:border-purple-600 outline-none py-2 text-sm"
-              required
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.name.message}
+              </p>
+            )}
           </div>
 
+          {/* Umur */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Umur
-            </label>
+            <label className="block text-sm font-medium mb-2">Umur</label>
             <input
               type="number"
-              name="age"
-              min={10}
-              max={100}
               placeholder="Jawaban Anda"
+              {...register("age", {
+                required: "Umur wajib diisi",
+                min: { value: 10, message: "Minimal umur 10 tahun" },
+                max: { value: 100, message: "Maksimal umur 100 tahun" },
+              })}
               className="w-full border-b-2 border-gray-300 focus:border-purple-600 outline-none py-2 text-sm"
-              required
             />
+            {errors.age && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.age.message}
+              </p>
+            )}
           </div>
 
+          {/* Gender */}
           <div>
-            <p className="text-sm font-medium text-gray-900 mb-3">
-              Jenis Kelamin
-            </p>
+            <p className="text-sm font-medium mb-3">Jenis Kelamin</p>
             <div className="space-y-2">
-              <label className="flex items-center gap-3 text-sm">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="Laki-Laki"
-                  className="accent-purple-600"
-                  required
-                />
-                Laki-Laki
-              </label>
-              <label className="flex items-center gap-3 text-sm">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="Perempuan"
-                  className="accent-purple-600"
-                />
-                Perempuan
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-900 mb-3">
-              Apakah Anda seorang perokok?
-            </p>
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 text-sm">
-                <input
-                  type="radio"
-                  name="isSmoker"
-                  value="Ya"
-                  className="accent-purple-600"
-                  required
-                />
-                Ya
-              </label>
-              <label className="flex items-center gap-3 text-sm">
-                <input
-                  type="radio"
-                  name="isSmoker"
-                  value="Tidak"
-                  className="accent-purple-600"
-                />
-                Tidak
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-900 mb-3">
-              Jika Anda perokok, rokok apa yang pernah Anda coba?
-            </p>
-            <div className="space-y-2">
-              {[
-                "Gudang Garam Filter",
-                "Lucky Strike",
-                "Marlboro",
-                "Esse",
-              ].map((item) => (
+              {["Laki-Laki", "Perempuan"].map((item) => (
                 <label key={item} className="flex items-center gap-3 text-sm">
                   <input
-                    type="checkbox"
-                    name="cigarettes[]"
+                    type="radio"
                     value={item}
+                    {...register("gender", {
+                      required: "Pilih jenis kelamin",
+                    })}
                     className="accent-purple-600"
                   />
                   {item}
                 </label>
               ))}
             </div>
+            {errors.gender && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.gender.message}
+              </p>
+            )}
           </div>
 
+          {/* Is Smoker */}
+          <div>
+            <p className="text-sm font-medium mb-3">
+              Apakah Anda seorang perokok?
+            </p>
+            <div className="space-y-2">
+              {["Ya", "Tidak"].map((item) => (
+                <label key={item} className="flex items-center gap-3 text-sm">
+                  <input
+                    type="radio"
+                    value={item}
+                    {...register("isSmoker", {
+                      required: "Pilih salah satu",
+                    })}
+                    className="accent-purple-600"
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+            {errors.isSmoker && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.isSmoker.message}
+              </p>
+            )}
+          </div>
+
+          {/* Cigarettes (aktif hanya jika Ya) */}
+          {isSmoker === "Ya" && (
+            <div>
+              <p className="text-sm font-medium mb-3">
+                Jika Anda perokok, rokok apa yang pernah Anda coba?
+              </p>
+              <div className="space-y-2">
+                {[
+                  "Gudang Garam Filter",
+                  "Lucky Strike",
+                  "Marlboro",
+                  "Esse",
+                ].map((item) => (
+                  <label key={item} className="flex items-center gap-3 text-sm">
+                    <input
+                      type="checkbox"
+                      value={item}
+                      {...register("cigarettes")}
+                      className="accent-purple-600"
+                    />
+                    {item}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Action */}
           <div className="flex items-center gap-4 pt-4">
             <button
               type="submit"
@@ -128,13 +160,13 @@ function App() {
               Kirim
             </button>
             <button
-              type="reset"
+              type="button"
+              onClick={() => reset()}
               className="text-purple-600 text-sm font-medium"
             >
               Reset
             </button>
           </div>
-
         </div>
       </form>
     </div>
